@@ -49,13 +49,36 @@ export default function BootSequence() {
   );
 
   const [visible, setVisible] = useState(true);
+  const [locked, setLocked] = useState(true);
   const [printedLineCount, setPrintedLineCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
 
   const timeoutsRef = useRef<number[]>([]);
+  const didSignalDoneRef = useRef(false);
+  const didSignalRevealRef = useRef(false);
+
+  const signalReveal = () => {
+    if (didSignalRevealRef.current) return;
+    didSignalRevealRef.current = true;
+    document.documentElement.dataset.bootReveal = "1";
+    window.dispatchEvent(new Event("bootsequence:reveal"));
+  };
+
+  const signalDone = () => {
+    if (didSignalDoneRef.current) return;
+    didSignalDoneRef.current = true;
+    document.documentElement.dataset.bootDone = "1";
+    window.dispatchEvent(new Event("bootsequence:done"));
+    setLocked(false);
+  };
+
+  const beginExit = () => {
+    signalReveal();
+    setVisible(false);
+  };
 
   useEffect(() => {
-    if (!visible) return;
+    if (!locked) return;
 
     const html = document.documentElement;
     const body = document.body;
@@ -70,7 +93,7 @@ export default function BootSequence() {
       html.style.overflow = prevHtmlOverflow;
       body.style.overflow = prevBodyOverflow;
     };
-  }, [visible]);
+  }, [locked]);
 
   useEffect(() => {
     return () => {
@@ -85,7 +108,7 @@ export default function BootSequence() {
     if (prefersReducedMotion) {
       setPrintedLineCount(lines.length);
       setCharCount(lines[lines.length - 1]?.text.length ?? 0);
-      const doneId = window.setTimeout(() => setVisible(false), 300);
+      const doneId = window.setTimeout(beginExit, 200);
       timeoutsRef.current.push(doneId);
       return;
     }
@@ -96,7 +119,7 @@ export default function BootSequence() {
     const currentLine = lines[printedLineCount];
 
     if (!currentLine) {
-      const doneId = window.setTimeout(() => setVisible(false), 450);
+      const doneId = window.setTimeout(beginExit, 250);
       timeoutsRef.current.push(doneId);
       return;
     }
@@ -142,23 +165,54 @@ export default function BootSequence() {
   }, [printedLineCount, charCount, lines]);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={signalDone}>
       {visible && (
         <motion.div
           key="boot"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
-          className="fixed inset-0 z-100 bg-black text-white"
+          transition={{ duration: 0.55, ease: "easeInOut" }}
+          className="fixed inset-0 z-100 bg-transparent text-white"
           style={{ touchAction: "none" }}
           aria-busy="true"
           aria-live="polite"
         >
-          <div className="absolute inset-0 noise opacity-70" />
-          <div className="absolute inset-0 bg-linear-to-b from-black via-black/90 to-black" />
+          <motion.div
+            className="absolute inset-0 bg-black"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+          />
+          <motion.div
+            className="absolute inset-0 noise opacity-70"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+          />
+          <motion.div
+            className="absolute inset-0 bg-linear-to-b from-black via-black/90 to-black"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+          />
 
           <div className="relative h-full w-full flex items-center justify-center px-6">
-            <div className="w-full max-w-2xl border-glow bg-black/40 backdrop-blur p-6">
+            <motion.div
+              className="w-full max-w-2xl border-glow bg-black/40 backdrop-blur p-6"
+              initial={{
+                opacity: 1,
+                scale: 1,
+                filter: "blur(0px)",
+                clipPath: "inset(0% 0% 0% 0%)",
+              }}
+              exit={{
+                opacity: 0.9,
+                scale: 0.985,
+                filter: "blur(2px)",
+                clipPath: "inset(46% 0% 46% 0%)",
+              }}
+              transition={{ duration: 0.55, ease: "easeInOut" }}
+            >
               <div className="text-[11px] tracking-wider opacity-60">
                 SYSTEM://INIT
               </div>
@@ -213,7 +267,7 @@ export default function BootSequence() {
                   transition={{ duration: 0.25, ease: "easeOut" }}
                 />
               </div>
-            </div>
+            </motion.div>
           </div>
         </motion.div>
       )}
