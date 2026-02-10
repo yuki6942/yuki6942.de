@@ -5,7 +5,7 @@ import BootSequence from "./components/BootSequence";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-white overflow-x-hidden pb-14">
+    <main className="min-h-screen bg-(--bg) text-(--fg) overflow-x-hidden pb-14">
       <BootSequence />
       <StatusBar />
       <Hero />

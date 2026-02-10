@@ -68,7 +68,7 @@ export default function Projects() {
             target="_blank"
             rel="noreferrer"
             whileHover={{ scale: 1.01 }}
-            className="border-glow p-4 flex justify-between items-center"
+            className="border-glow bg-(--surface2) p-4 flex justify-between items-center"
           >
             <span className="opacity-60">
               #{String(idx + 1).padStart(2, "0")}
@@ -82,7 +82,10 @@ export default function Projects() {
                   {p.languages
                     .map((lang) =>
                       typeof lang === "string"
-                        ? { name: lang, percent: undefined as number | undefined }
+                        ? {
+                            name: lang,
+                            percent: undefined as number | undefined,
+                          }
                         : { name: lang.name, percent: lang.percent },
                     )
                     .filter((lang) => Boolean(lang.name))
@@ -96,7 +99,9 @@ export default function Projects() {
                         }
                       >
                         {lang.name}
-                        {typeof lang.percent === "number" ? ` ${lang.percent}%` : ""}
+                        {typeof lang.percent === "number"
+                          ? ` ${lang.percent}%`
+                          : ""}
                       </span>
                     ))}
                 </div>
