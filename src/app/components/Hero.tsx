@@ -2,6 +2,8 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
+import { BOOT_EVENTS, hasBootRevealOrDoneFlag } from "@/lib/boot";
+
 export default function Hero() {
   const headline = "Hey, I'm Philipp.";
   const tagline = "Welcome to my digital archive.";
@@ -9,23 +11,19 @@ export default function Hero() {
   const [introFx, setIntroFx] = useState(false);
 
   useEffect(() => {
-    const alreadyRevealed =
-      document.documentElement.dataset.bootReveal === "1" ||
-      document.documentElement.dataset.bootDone === "1";
-
-    if (alreadyRevealed) {
+    if (hasBootRevealOrDoneFlag()) {
       setBootDone(true);
       return;
     }
 
     const onReveal = () => setBootDone(true);
-    window.addEventListener("bootsequence:reveal", onReveal, { once: true });
+    window.addEventListener(BOOT_EVENTS.reveal, onReveal, { once: true });
 
     // Fallback (in case the boot overlay is removed later)
     const fallbackId = window.setTimeout(() => setBootDone(true), 6000);
 
     return () => {
-      window.removeEventListener("bootsequence:reveal", onReveal);
+      window.removeEventListener(BOOT_EVENTS.reveal, onReveal);
       window.clearTimeout(fallbackId);
     };
   }, []);
@@ -57,7 +55,7 @@ export default function Hero() {
             transition: { duration: 0.65, ease: "easeInOut", delay: 0.06 },
           },
         }}
-        className="relative border-glow p-8 text-center overflow-hidden"
+        className="relative border-glow bg-(--surface2) p-8 text-center overflow-hidden"
       >
         {introFx && (
           <motion.div
@@ -127,16 +125,6 @@ export default function Hero() {
                 {char === " " ? "\u00A0" : char}
               </motion.span>
             ))}
-            {bootDone && (
-              <motion.span
-                aria-hidden="true"
-                className="inline-block w-[0.6ch] align-baseline opacity-80"
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
-              >
-                ▍
-              </motion.span>
-            )}
           </motion.span>
         </motion.h1>
 
