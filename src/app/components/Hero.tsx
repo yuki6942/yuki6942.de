@@ -127,16 +127,6 @@ export default function Hero() {
                 {char === " " ? "\u00A0" : char}
               </motion.span>
             ))}
-            {bootDone && (
-              <motion.span
-                aria-hidden="true"
-                className="inline-block w-[0.6ch] align-baseline opacity-80"
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
-              >
-                ▍
-              </motion.span>
-            )}
           </motion.span>
         </motion.h1>
 
