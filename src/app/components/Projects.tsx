@@ -23,33 +23,21 @@ export default function Projects() {
     rest: {
       y: 0,
       scale: 1,
-      rotate: 0,
-      filter: "brightness(1) contrast(1)",
-      transition: { type: "spring", stiffness: 520, damping: 40 },
+      transition: { type: "spring", stiffness: 500, damping: 38 },
     },
     hover: {
-      y: -2,
-      scale: 1.012,
-      rotate: -0.2,
-      filter: "brightness(1.06) contrast(1.04)",
-      transition: { type: "spring", stiffness: 520, damping: 32 },
+      y: -3,
+      scale: 1.005,
+      transition: { type: "spring", stiffness: 400, damping: 30 },
     },
   } as const;
 
-  const sheenVariants = {
-    rest: { opacity: 0, x: "-60%" },
+  const edgeVariants = {
+    rest: { scaleY: 0, opacity: 0 },
     hover: {
+      scaleY: 1,
       opacity: 1,
-      x: "140%",
-      transition: { duration: 0.55, ease: "easeOut" },
-    },
-  } as const;
-
-  const scanlineVariants = {
-    rest: { opacity: 0 },
-    hover: {
-      opacity: 1,
-      transition: { duration: 0.15, ease: "easeOut" },
+      transition: { duration: 0.2, ease: "easeOut" },
     },
   } as const;
 
@@ -84,7 +72,17 @@ export default function Projects() {
 
   return (
     <section className="px-6 py-24 max-w-5xl mx-auto">
-      <h2 className="text-sm mb-8 opacity-60">PROJECTS</h2>
+      <div className="flex items-center gap-3 mb-8">
+        <span className="led led-pink" style={{ animationDelay: "0.5s" }} />
+        <h2 className="text-sm opacity-60 tracking-widest">PROJECTS</h2>
+        <div
+          className="flex-1 h-px opacity-30"
+          style={{
+            background:
+              "linear-gradient(90deg, var(--accent-dim), transparent)",
+          }}
+        />
+      </div>
 
       <div className="grid gap-6">
         {!projects && !error && (
@@ -107,21 +105,15 @@ export default function Projects() {
             initial="rest"
             animate="rest"
             whileHover={reducedMotion ? { scale: 1.01 } : "hover"}
-            className="border-glow bg-(--surface2) p-4 flex justify-between items-center relative overflow-hidden"
+            className="project-card bg-(--surface2) p-4 flex justify-between items-center relative overflow-hidden"
           >
             {!reducedMotion && (
-              <>
-                <motion.span
-                  aria-hidden="true"
-                  className="project-scanlines"
-                  variants={scanlineVariants}
-                />
-                <motion.span
-                  aria-hidden="true"
-                  className="project-sheen"
-                  variants={sheenVariants}
-                />
-              </>
+              <motion.span
+                aria-hidden="true"
+                className="absolute left-0 top-0 bottom-0 w-0.5 origin-top"
+                style={{ background: "var(--accent)" }}
+                variants={edgeVariants}
+              />
             )}
 
             <div className="relative z-10 flex justify-between items-center w-full">

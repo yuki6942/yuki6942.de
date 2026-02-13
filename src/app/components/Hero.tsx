@@ -2,7 +2,17 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-import { BOOT_EVENTS, hasBootRevealOrDoneFlag } from "@/lib/boot";
+import { BOOT_EVENTS, hasBootRevealOrDoneFlag } from "@/lib/hooks/boot";
+import Socials from "./Socials";
+
+function getAge(): number {
+  const birth = new Date(2005, 5, 30);
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const m = now.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
+  return age;
+}
 
 export default function Hero() {
   const headline = "Hey, I'm Philipp.";
@@ -55,7 +65,7 @@ export default function Hero() {
             transition: { duration: 0.65, ease: "easeInOut", delay: 0.06 },
           },
         }}
-        className="relative border-glow bg-(--surface2) p-8 text-center overflow-hidden"
+        className="relative border-glow bg-(--surface2) p-8 md:p-12 text-center overflow-hidden"
       >
         {introFx && (
           <motion.div
@@ -75,7 +85,18 @@ export default function Hero() {
           </motion.div>
         )}
 
-        <p className="text-xs opacity-60 mb-2">BOOT SEQUENCE COMPLETE</p>
+        <p className="text-xs opacity-60 mb-4 tracking-widest">
+          BOOT SEQUENCE COMPLETE
+        </p>
+
+        <div
+          className="mx-auto mb-6 h-px w-24"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, var(--accent-dim), transparent)",
+          }}
+        />
+
         <motion.h1
           className="text-4xl md:text-6xl text-glow tracking-wide"
           initial={false}
@@ -128,8 +149,24 @@ export default function Hero() {
           </motion.span>
         </motion.h1>
 
+        <div
+          className="mx-auto mt-6 h-px w-24"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, var(--accent-dim), transparent)",
+          }}
+        />
+
         <p className="mt-4 text-sm opacity-70">{tagline}</p>
-        <p className="mt-1 text-xs opacity-50">status: online</p>
+        <p className="mt-2 text-xs opacity-40 tracking-wider">
+          &gt; {getAge()} / <span className="text-glow">any</span> / Germany /
+          Software Developer
+        </p>
+        <p className="mt-1 text-xs opacity-40 tracking-wider">
+          &gt; status: <span className="text-glow">online</span>
+        </p>
+
+        <Socials />
       </motion.div>
     </section>
   );
