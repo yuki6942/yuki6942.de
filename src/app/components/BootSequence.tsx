@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { markBootDone, markBootReveal } from "@/lib/boot";
+import { markBootDone, markBootReveal } from "@/lib/hooks/boot";
 import { readSkipBootSequence } from "@/lib/prefs";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 
